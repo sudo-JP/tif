@@ -63,3 +63,10 @@ bool battery_read(BatteryContext *ctx, BatteryState *out) {
 }
 
 
+char* battery_format_notification(BatteryState *state) {
+    int len = snprintf(NULL, 0, "Battery is at %d", state->percent);
+    char *str = malloc(len + 1);
+    snprintf(str, len + 1, "Battery is at %d", state->percent);
+
+    return str;
+}

@@ -22,4 +22,6 @@ BatteryContext *battery_init();
 void battery_destroy(BatteryContext *ctx);
 bool battery_read(BatteryContext *ctx, BatteryState *out);
 
+char* battery_format_notification(BatteryState *state);
+
 #endif 
