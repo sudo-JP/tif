@@ -1,23 +1,40 @@
 #include "battery.h"
+#include <bits/time.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sys/timerfd.h>
+#include <unistd.h>
 
 // Im a good programmer 
 BatteryContext *battery_init() {
     BatteryContext *ctx = malloc(sizeof(BatteryContext));
     ctx->percent_fp = fopen(BATTERY_PERCENT_PATH , "r");
     if (ctx->percent_fp == NULL) {
+        free_resource: 
         free(ctx);
         return NULL;
     }
     ctx->charging_fp = fopen(BATTERY_CHARGING_PATH, "r");
     if (ctx->charging_fp == NULL) {
         fclose(ctx->percent_fp);
-        free(ctx);
-        return NULL;
+        goto free_resource;
     }
-    
+    ctx->timer_fd = timerfd_create(CLOCK_MONOTONIC, 0);
+    if (ctx->timer_fd == -1) {
+        goto free_resource;
+    }
+    struct itimerspec utmr; 
+    utmr.it_value.tv_sec = POLL_INTERVAL;
+    utmr.it_value.tv_nsec = 0;
+
+    utmr.it_interval.tv_sec = POLL_INTERVAL;
+    utmr.it_interval.tv_nsec = 0; 
+
+    if (timerfd_settime(ctx->timer_fd, 0, &utmr, NULL) == -1) {
+        close(ctx->timer_fd);
+        goto free_resource;
+    }
     return ctx;
 }
 

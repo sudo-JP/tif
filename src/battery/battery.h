@@ -4,12 +4,14 @@
 
 #define BATTERY_PERCENT_PATH "/sys/class/power_supply/BAT0/capacity"
 #define BATTERY_CHARGING_PATH "/sys/class/power_supply/BAT0/status"
+#define POLL_INTERVAL 600
 #define CHARGING_STAT_BUF_SIZE 16
 #define CHARGING_PERCENT_BUF_SIZE 4
 
 typedef struct {
     FILE *percent_fp;
     FILE *charging_fp;
+    int timer_fd; 
 } BatteryContext; 
 
 

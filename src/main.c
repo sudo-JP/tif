@@ -10,7 +10,7 @@ int main(int argc, char *argv[]) {
     }
 
     char* battery_str = battery_format_notification(&state);
-    notify("Low Battery", battery_str);
+    //notify("Low Battery", battery_str);
     free(battery_str);
 
     battery_destroy(ctx);
